@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hivernacle</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        /* Estils per als botons segons l'estat */
+        .control-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .off {
+            background-color: red;
+        }
+        .on {
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Control d'Actuadors</h1>
+        <div class="button-container">
+            <button id="ventiladors" class="control-button off" onclick="enviarOrdre('ventiladors')">
+                <img src="static/fan.png" style="width:20px; height:20px; margin-right:20px" alt="Ventiladors" /> Ventiladors Apagats
+            </button>
+            <button id="finestra" class="control-button off" onclick="enviarOrdre('finestra')">
+                <img src="static/window_close.png" style="width:20px; height:20px; margin-right:20px" alt="Finestra Tancada" /> Finestra Tancada
+            </button>
+            <button id="llums" class="control-button off" onclick="enviarOrdre('llums')">
+                <img src="static/light_close.png" style="width:20px; height:20px; margin-right:20px" alt="Llums Apagats" /> Llums Apagats
+            </button>
+            <button id="rega" class="control-button off" onclick="enviarOrdre('rega')">
+                <img src="static/gardening.png" style="width:20px; height:20px; margin-right:20px" alt="Bomba Apagada" /> Bomba Apagada
+            </button>
+        </div>
+
+        <h2>Valors dels sensors</h2>
+        <div id="sensor-values">
+            <p>Temperatura: <span id="temperatura">--</span> °C</p>
+            <p>Humitat: <span id="humitat">--</span> %</p>
+            <p>Humitat del sòl: <span id="humitat-sol">--</span> %</p>
+            <p>Lluminositat: <span id="lluminositat">--</span> lx</p>
+        </div>
+    </div>
+
+    <script>
+        function enviarOrdre(ordre) {
+            fetch('/ordre', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ordre })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'OK') {
+                    // Canvia l'estil del botó segons l'ordre enviada
+                    const button = document.getElementById(ordre);
+                    if (ordre === 'finestra') {
+                        button.classList.toggle('on');
+                        button.classList.toggle('off');
+                        button.innerHTML = button.classList.contains('on')
+                            ? '<img src="static/window_open.png" style="width:20px; height:20px; margin-right:20px" alt="Finestra Oberta" /> Finestra Oberta'
+                            : '<img src="static/window_close.png" style="width:20px; height:20px; margin-right:20px" alt="Finestra Tancada" /> Finestra Tancada';
+                    }else if(ordre == 'llums'){
+                        button.classList.toggle('on');
+                        button.classList.toggle('off');
+                        button.innerHTML = button.classList.contains('on')
+                            ? '<img src="static/light_open.png" style="width:20px; height:20px; margin-right:20px" alt="Llums Oberts" /> Llums Oberts'
+                            : '<img src="static/light_close.png" style="width:20px; height:20px; margin-right:20px" alt="Llums Apagats" /> Llums Apagats';
+                    } else if (ordre === 'ventiladors') {
+                        button.classList.toggle('on');
+                        button.classList.toggle('off');
+                        button.innerHTML = button.classList.contains('on')
+                            ? '<img src="static/fan.png" style="width:20px; height:20px; margin-right:20px" alt="Ventiladors" /> Ventiladors Encesos'
+                            : '<img src="static/fan.png" style="width:20px; height:20px; margin-right:20px" alt="Ventiladors" /> Ventiladors Apagats';
+                    }else if (ordre === 'rega') {
+                        button.classList.toggle('on');
+                        button.classList.toggle('off');
+                        button.innerHTML = button.classList.contains('on')
+                            ? '<img src="static/gardening.png" style="width:20px; height:20px; margin-right:20px" alt="Bomba Encesa" /> Bomba Encesa'
+                            : '<img src="static/gardening.png" style="width:20px; height:20px; margin-right:20px" alt="Bomba Apagada" /> Bomba Apagada';
+                    }
+                } else {
+                    console.error(data.missatge);
+                }
+            })
+            .catch(err => console.error(err));
+        }
+
+        function actualitzarValors() {
+            fetch('/valors')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('temperatura').textContent = data.temperatura || '--';
+                document.getElementById('humitat').textContent = data.humitat || '--';
+                document.getElementById('humitat-sol').textContent = data.humitat_sòl || '--';
+                document.getElementById('lluminositat').textContent = data.lluminositat || '--';
+            })
+            .catch(err => console.error('Error actualitzant valors:', err));
+        }
+
+        // Actualitza els valors cada 5 segons
+        setInterval(actualitzarValors, 15000);
+    </script>
+</body>
+</html>
