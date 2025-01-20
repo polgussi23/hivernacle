@@ -1,0 +1,73 @@
+/* Estil per a tot el cos de la pàgina */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Contenidor central */
+.container {
+    text-align: center;
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+    width: 300px;
+}
+
+/* Titular */
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Botons */
+.button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.control-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 15px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+.control-button i {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+/* Canvi de color en passar el ratolí */
+.control-button:hover {
+    background-color: #45a049;
+}
+
+/* Estil per quan el botó estigui desactivat */
+.control-button:disabled {
+    background-color: #b0b0b0;
+    cursor: not-allowed;
+}
+
+.control-button.on {
+    background-color: green !important;
+}
+
+.control-button.off {
+    background-color: red !important;
+}
